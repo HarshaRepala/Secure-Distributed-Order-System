@@ -1,0 +1,112 @@
+# Backend Microservices Platform - Refactored cURL API Examples
+#
+# This file documents all currently exposed API endpoints in:
+# - auth-service
+# - order-service
+# - inventory-service
+#
+# Service ports (docker compose):
+# auth-service=8081, order-service=8082, inventory-service=8083
+
+############################
+# 0) Setup variables
+############################
+
+BASE_AUTH_URL="http://localhost:8081"
+BASE_ORDER_URL="http://localhost:8082"
+BASE_INVENTORY_URL="http://localhost:8083"
+
+USER_EMAIL="user@example.com"
+USER_PASSWORD="Password@123"
+
+ADMIN_EMAIL="admin@example.com"
+ADMIN_PASSWORD="Admin@123"
+
+############################
+# 1) AUTH SERVICE (8081)
+############################
+
+# 1.1 Register USER
+curl -X POST "$BASE_AUTH_URL/api/v1/auth/register" \
+  -H "Content-Type: application/json" \
+  -d "{\"email\":\"$USER_EMAIL\",\"password\":\"$USER_PASSWORD\",\"role\":\"USER\"}"
+
+# 1.2 Register ADMIN
+curl -X POST "$BASE_AUTH_URL/api/v1/auth/register" \
+  -H "Content-Type: application/json" \
+  -d "{\"email\":\"$ADMIN_EMAIL\",\"password\":\"$ADMIN_PASSWORD\",\"role\":\"ADMIN\"}"
+
+# 1.3 Login USER
+USER_LOGIN_RESPONSE=$(curl -s -X POST "$BASE_AUTH_URL/api/v1/auth/login" \
+  -H "Content-Type: application/json" \
+  -d "{\"email\":\"$USER_EMAIL\",\"password\":\"$USER_PASSWORD\"}")
+
+echo "$USER_LOGIN_RESPONSE"
+USER_ACCESS_TOKEN=$(echo "$USER_LOGIN_RESPONSE" | jq -r '.accessToken')
+USER_REFRESH_TOKEN=$(echo "$USER_LOGIN_RESPONSE" | jq -r '.refreshToken')
+
+# 1.4 Refresh USER access token
+curl -X POST "$BASE_AUTH_URL/api/v1/auth/refresh" \
+  -H "Content-Type: application/json" \
+  -d "{\"refreshToken\":\"$USER_REFRESH_TOKEN\"}"
+
+# 1.5 Logout USER (returns 204 No Content)
+curl -i -X POST "$BASE_AUTH_URL/api/v1/auth/logout" \
+  -H "Content-Type: application/json" \
+  -d "{\"refreshToken\":\"$USER_REFRESH_TOKEN\"}"
+
+# 1.6 Login ADMIN
+ADMIN_LOGIN_RESPONSE=$(curl -s -X POST "$BASE_AUTH_URL/api/v1/auth/login" \
+  -H "Content-Type: application/json" \
+  -d "{\"email\":\"$ADMIN_EMAIL\",\"password\":\"$ADMIN_PASSWORD\"}")
+
+echo "$ADMIN_LOGIN_RESPONSE"
+ADMIN_ACCESS_TOKEN=$(echo "$ADMIN_LOGIN_RESPONSE" | jq -r '.accessToken')
+
+############################
+# 2) ORDER SERVICE (8082)
+############################
+
+# 2.1 Create order (USER or ADMIN token required)
+# Request body must match CreateOrderRequest: { productId, quantity }
+CREATE_ORDER_RESPONSE=$(curl -s -X POST "$BASE_ORDER_URL/api/v1/orders" \
+  -H "Authorization: Bearer $USER_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"productId":1,"quantity":2}')
+
+echo "$CREATE_ORDER_RESPONSE"
+# OrderResponse: { id, userId, productId, quantity, status, createdAt }
+ORDER_ID=$(echo "$CREATE_ORDER_RESPONSE" | jq -r '.id')
+
+# 2.2 Get orders (USER or ADMIN token required)
+curl -X GET "$BASE_ORDER_URL/api/v1/orders" \
+  -H "Authorization: Bearer $USER_ACCESS_TOKEN"
+
+# 2.3 Cancel order (ADMIN token required)
+curl -X POST "$BASE_ORDER_URL/api/v1/orders/$ORDER_ID/cancel" \
+  -H "Authorization: Bearer $ADMIN_ACCESS_TOKEN"
+
+############################
+# 3) INVENTORY SERVICE (8083)
+############################
+
+# NOTE: All inventory endpoints require authentication.
+# Reserve/release require any authenticated user; update requires ADMIN.
+
+# 3.1 Reserve stock (authenticated token required)
+curl -X POST "$BASE_INVENTORY_URL/api/v1/inventory/reserve" \
+  -H "Authorization: Bearer $USER_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"productId":1,"quantity":2}'
+
+# 3.2 Release stock (authenticated token required)
+curl -X POST "$BASE_INVENTORY_URL/api/v1/inventory/release" \
+  -H "Authorization: Bearer $USER_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"productId":1,"quantity":1}'
+
+# 3.3 Update stock (ADMIN token required)
+curl -X POST "$BASE_INVENTORY_URL/api/v1/inventory/update" \
+  -H "Authorization: Bearer $ADMIN_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"productId":1,"name":"Mechanical Keyboard","quantity":100}'
