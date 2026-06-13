@@ -83,10 +83,10 @@ public class OrderService {
 
     private void validateInventoryResponse(InventoryResponse inventoryResponse, Long expectedProductId) {
         if (inventoryResponse == null || inventoryResponse.productId() == null) {
-            throw new ApiException("Inventory response is invalid");
+            throw new ApiException("Inventory response is invalid.");
         }
         if (!expectedProductId.equals(inventoryResponse.productId())) {
-            throw new ApiException("Inventory response product mismatch");
+            throw new ApiException("Inventory response product mismatch.");
         }
     }
 
