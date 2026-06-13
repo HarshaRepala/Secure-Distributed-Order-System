@@ -49,6 +49,7 @@ Responsible for:
 
 * Inventory management
 * Stock reservation
+* Stock release
 * Admin stock updates
 * Optimistic locking
 
