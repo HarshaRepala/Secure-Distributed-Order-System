@@ -1,12 +1,26 @@
-name: CI-CD
+name: CI/CD - Build, Push and Deploy
 
 on:
+  pull_request:
+    branches:
+      - main
+
   push:
-    branches: ["main"]
+    branches:
+      - main
 
 jobs:
-  build-test-push:
+  build-test:
+    name: Build & Test - ${{ matrix.service }}
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        service:
+          - auth-service
+          - inventory-service
+          - order-service
 
     steps:
       - name: Checkout
@@ -16,34 +30,99 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: "17"
+          cache: maven
 
-      - name: Build auth-service
-        run: mvn -B clean test package
-        working-directory: backend-microservices/auth-service
-
-      - name: Build order-service
-        run: mvn -B clean test package
-        working-directory: backend-microservices/order-service
-
-      - name: Build inventory-service
-        run: mvn -B clean test package
-        working-directory: backend-microservices/inventory-service
-
-      - name: Docker login
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
-      - name: Build and push auth-service
+      - name: Build and Test
+        env:
+          SERVICE: ${{ matrix.service }}
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/auth-service:latest backend-microservices/auth-service
-          docker push ${{ secrets.DOCKER_USERNAME }}/auth-service:latest
+          DIR=backend-microservices/$SERVICE
 
-      - name: Build and push order-service
-        run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/order-service:latest backend-microservices/order-service
-          docker push ${{ secrets.DOCKER_USERNAME }}/order-service:latest
+          if [ ! -f "$DIR/pom.xml" ]; then
+            echo "pom.xml not found for $SERVICE"
+            exit 1
+          fi
 
-      - name: Build and push inventory-service
+          mvn -B clean verify -f "$DIR/pom.xml"
+
+  docker-publish:
+    name: Build & Push - ${{ matrix.service }}
+    needs: build-test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    strategy:
+      fail-fast: false
+      matrix:
+        service:
+          - auth-service
+          - inventory-service
+          - order-service
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker Image
+        env:
+          SERVICE: ${{ matrix.service }}
+          DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/inventory-service:latest backend-microservices/inventory-service
-          docker push ${{ secrets.DOCKER_USERNAME }}/inventory-service:latest
+          DIR=backend-microservices/$SERVICE
+
+          docker build \
+            -t $DOCKER_USER/$SERVICE:latest \
+            -t $DOCKER_USER/$SERVICE:${GITHUB_SHA} \
+            -f "$DIR/Dockerfile" \
+            "$DIR"
+
+      - name: Push Docker Image
+        env:
+          SERVICE: ${{ matrix.service }}
+          DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+        run: |
+          docker push $DOCKER_USER/$SERVICE:latest
+          docker push $DOCKER_USER/$SERVICE:${GITHUB_SHA}
+
+#  deploy:
+#    name: Deploy to EC2
+#    needs: docker-publish
+#    runs-on: ubuntu-latest
+#    if: github.event_name == 'push'
+#
+#    steps:
+#      - name: Deploy
+#        uses: appleboy/ssh-action@v1.0.3
+#        with:
+#          host: ${{ secrets.EC2_HOST }}
+#          username: ${{ secrets.EC2_USER }}
+#          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+#          script: |
+#            cd /opt/app
+#
+#            docker compose -f docker-compose.prod.yml pull
+#
+#            docker compose -f docker-compose.prod.yml up -d
+#
+#            echo "Waiting for services to start..."
+#            sleep 60
+#
+#            echo "Checking auth-service health..."
+#            curl -f http://localhost:8081/actuator/health || exit 1
+#
+#            echo "Checking order-service health..."
+#            curl -f http://localhost:8082/actuator/health || exit 1
+#
+#            echo "Checking inventory-service health..."
+#            curl -f http://localhost:8083/actuator/health || exit 1
+#
+#            docker image prune -af
+#
+#            docker ps
