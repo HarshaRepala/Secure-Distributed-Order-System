@@ -45,7 +45,7 @@ public class OrderService {
         } catch (FeignException | ApiException ex) {
             savedOrder.setStatus(OrderStatus.CANCELLED);
             orderRepository.save(savedOrder);
-            throw new ApiException("Order cancelled: unable to reserve inventory");
+            throw new ApiException("Order cancelled: unable to reserve inventory. Error: " + ex.getMessage());
         }
     }
 
@@ -72,7 +72,7 @@ public class OrderService {
                 InventoryResponse inventoryResponse = inventoryFeignClient.release(releaseRequest);
                 validateInventoryResponse(inventoryResponse, order.getProductId());
             } catch (FeignException | ApiException ex) {
-                throw new ApiException("Unable to release reserved inventory for cancelled order");
+                throw new ApiException("Unable to release reserved inventory for cancelled order. Error: " + ex.getMessage());
             }
         }
 
