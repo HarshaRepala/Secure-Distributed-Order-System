@@ -15,6 +15,26 @@ spring:
         jwt:
           public-key-location: ${JWT_PUBLIC_KEY_LOCATION:classpath:public.pem}
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+  endpoint:
+    health:
+      show-details: always
+
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: order-service
+    description: Order Service
+    version: 1.0.0
+
 logging:
   level:
     root: INFO
