@@ -91,38 +91,40 @@ jobs:
           docker push $DOCKER_USER/$SERVICE:latest
           docker push $DOCKER_USER/$SERVICE:${GITHUB_SHA}
 
-#  deploy:
-#    name: Deploy to EC2
-#    needs: docker-publish
-#    runs-on: ubuntu-latest
-#    if: github.event_name == 'push'
-#
-#    steps:
-#      - name: Deploy
-#        uses: appleboy/ssh-action@v1.0.3
-#        with:
-#          host: ${{ secrets.EC2_HOST }}
-#          username: ${{ secrets.EC2_USER }}
-#          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-#          script: |
-#            cd /opt/app
-#
-#            docker compose -f docker-compose.prod.yml pull
-#
-#            docker compose -f docker-compose.prod.yml up -d
-#
-#            echo "Waiting for services to start..."
-#            sleep 60
-#
-#            echo "Checking auth-service health..."
-#            curl -f http://localhost:8081/actuator/health || exit 1
-#
-#            echo "Checking order-service health..."
-#            curl -f http://localhost:8082/actuator/health || exit 1
-#
-#            echo "Checking inventory-service health..."
-#            curl -f http://localhost:8083/actuator/health || exit 1
-#
-#            docker image prune -af
-#
-#            docker ps
+  deploy:
+    name: Deploy to EC2
+    needs: docker-publish
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+      - name: Deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          script: |
+            cd /opt/app
+
+            git pull origin main
+
+            docker compose -f docker-compose.prod.yml pull
+
+            docker compose -f docker-compose.prod.yml up -d
+
+            echo "Waiting for services to start..."
+            sleep 60
+
+            echo "Checking auth-service health..."
+            curl -f http://localhost:8081/actuator/health || exit 1
+
+            echo "Checking order-service health..."
+            curl -f http://localhost:8082/actuator/health || exit 1
+
+            echo "Checking inventory-service health..."
+            curl -f http://localhost:8083/actuator/health || exit 1
+
+            docker image prune -af
+
+            docker ps
