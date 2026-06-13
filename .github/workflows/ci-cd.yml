@@ -109,9 +109,9 @@ jobs:
 
             git pull origin main
 
-            docker compose -f docker-compose.prod.yml pull
+            docker-compose -f docker-compose.prod.yml pull
 
-            docker compose -f docker-compose.prod.yml up -d --no-deps --force-recreate order-service auth-service inventory-service
+            docker-compose -f docker-compose.prod.yml up -d 
 
             echo "Waiting for services to start..."
             sleep 40
