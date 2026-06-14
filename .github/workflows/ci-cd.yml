@@ -78,8 +78,8 @@ jobs:
           DIR=backend-microservices/$SERVICE
 
           docker build \
-            -t $DOCKER_USER/$SERVICE:latest \
             -t $DOCKER_USER/$SERVICE:${GITHUB_SHA} \
+            -t $DOCKER_USER/$SERVICE:latest \
             -f "$DIR/Dockerfile" \
             "$DIR"
 
@@ -88,8 +88,8 @@ jobs:
           SERVICE: ${{ matrix.service }}
           DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
         run: |
-          docker push $DOCKER_USER/$SERVICE:latest
           docker push $DOCKER_USER/$SERVICE:${GITHUB_SHA}
+          docker push $DOCKER_USER/$SERVICE:latest   
 
   deploy:
     name: Deploy to EC2
