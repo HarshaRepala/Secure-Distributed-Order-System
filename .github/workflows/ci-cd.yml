@@ -128,7 +128,7 @@ jobs:
                   return 0
                 fi
                 
-                echo "  ⏳ $service_name not ready (attempt $attempt/$max_attempts), retrying in 10s..."
+                echo "  ⏳ Services not ready (attempt $attempt/$max_attempts), retrying in 10s..."
                 sleep 10
                 attempt=$((attempt + 1))
               done
@@ -137,18 +137,9 @@ jobs:
               return 1
             }
 
-            wait_for_service "auth-service" "http://localhost:8081/actuator/health" &
-            AUTH_PID=$!
-            wait_for_service "order-service" "http://localhost:8082/actuator/health" &
-            ORDER_PID=$!
-            wait_for_service "inventory-service" "http://localhost:8083/actuator/health" &
-            INVENTORY_PID=$!
-
-            wait $AUTH_PID || (echo "Auth service health check failed"; exit 1)
-            wait $ORDER_PID || (echo "Order service health check failed"; exit 1)
-            wait $INVENTORY_PID || (echo "Inventory service health check failed"; exit 1)
-
-            echo "✓ All services are healthy"
+            wait_for_service "auth-service" "http://localhost:8081/actuator/health" || exit 1
+            wait_for_service "order-service" "http://localhost:8082/actuator/health" || exit 1
+            wait_for_service "inventory-service" "http://localhost:8083/actuator/health" || exit 1
 
             docker image prune -af
 
