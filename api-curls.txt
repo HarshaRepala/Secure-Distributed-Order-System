@@ -63,6 +63,12 @@ ADMIN_LOGIN_RESPONSE=$(curl -s -X POST "$BASE_AUTH_URL/api/v1/auth/login" \
 echo "$ADMIN_LOGIN_RESPONSE"
 ADMIN_ACCESS_TOKEN=$(echo "$ADMIN_LOGIN_RESPONSE" | jq -r '.accessToken')
 
+# 1.7 Health check
+curl -X GET "$BASE_AUTH_URL/actuator/health"
+
+# 1.8 Info
+curl -X GET "$BASE_AUTH_URL/actuator/info"
+
 ############################
 # 2) ORDER SERVICE (8082)
 ############################
@@ -85,6 +91,12 @@ curl -X GET "$BASE_ORDER_URL/api/v1/orders" \
 # 2.3 Cancel order (ADMIN token required)
 curl -X POST "$BASE_ORDER_URL/api/v1/orders/$ORDER_ID/cancel" \
   -H "Authorization: Bearer $ADMIN_ACCESS_TOKEN"
+
+# 2.4 Health check
+curl -X GET "$BASE_ORDER_URL/actuator/health"
+
+# 2.5 Info
+curl -X GET "$BASE_ORDER_URL/actuator/info"
 
 ############################
 # 3) INVENTORY SERVICE (8083)
@@ -110,3 +122,10 @@ curl -X POST "$BASE_INVENTORY_URL/api/v1/inventory/update" \
   -H "Authorization: Bearer $ADMIN_ACCESS_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"productId":1,"name":"Mechanical Keyboard","quantity":100}'
+
+# 3.4 Health check
+curl -X GET "$BASE_INVENTORY_URL/actuator/health"
+
+# 3.5 Info
+curl -X GET "$BASE_INVENTORY_URL/actuator/info"
+
