@@ -113,8 +113,8 @@ jobs:
 
             docker-compose -f docker-compose.prod.yml up -d 
 
-            echo "Waiting for services to start (initial wait 50 seconds)..."
-            sleep 50
+            echo "Waiting for services to start (initial wait 60 seconds)..."
+            sleep 60
 
             wait_for_service() {
               local service_name=$1
