@@ -33,7 +33,7 @@ info:
   app:
     name: inventory-service
     description: Inventory Service
-    version: 1.0.1
+    version: 1.0.0
       
 logging:
   level:
