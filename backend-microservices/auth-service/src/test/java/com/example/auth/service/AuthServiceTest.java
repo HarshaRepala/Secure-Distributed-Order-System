@@ -26,11 +26,16 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
 
-    @Mock private UserRepository userRepository;
-    @Mock private RefreshTokenRepository refreshTokenRepository;
-    @Mock private PasswordEncoder passwordEncoder;
-    @Mock private JwtProvider jwtProvider;
-    @Mock private RedisTemplate<String, String> redisTemplate;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private RefreshTokenRepository refreshTokenRepository;
+    @Mock
+    private PasswordEncoder passwordEncoder;
+    @Mock
+    private JwtProvider jwtProvider;
+    @Mock
+    private RedisTemplate<String, String> redisTemplate;
 
     private AuthService authService;
 

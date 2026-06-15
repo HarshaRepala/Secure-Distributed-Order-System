@@ -18,8 +18,10 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class InventoryServiceTest {
 
-    @Mock private ProductRepository productRepository;
-    @InjectMocks private InventoryService inventoryService;
+    @Mock
+    private ProductRepository productRepository;
+    @InjectMocks
+    private InventoryService inventoryService;
 
     @Test
     void shouldPreventOverselling() {
