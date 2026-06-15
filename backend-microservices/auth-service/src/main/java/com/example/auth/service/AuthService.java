@@ -51,9 +51,9 @@ public class AuthService {
     @Transactional
     public AuthResponse login(LoginRequest request) {
         UserAccount user = userRepository.findByEmail(request.email())
-                .orElseThrow(() -> new ApiException("Invalid credentials"));
+                .orElseThrow(() -> new ApiException("Invalid Email"));
         if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
-            throw new ApiException("Invalid credentials");
+            throw new ApiException("Invalid Password");
         }
         log.info("User login success id={}", user.getId());
         return issueTokens(user);
