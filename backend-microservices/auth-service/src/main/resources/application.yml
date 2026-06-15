@@ -35,7 +35,7 @@ info:
   app:
     name: auth-service
     description: Authentication Service
-    version: 1.0.0
+    version: 1.0.1
 
 logging:
   level:

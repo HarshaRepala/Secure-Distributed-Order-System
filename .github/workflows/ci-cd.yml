@@ -109,9 +109,9 @@ jobs:
 
             git pull origin main
 
-            docker-compose -f docker-compose.prod.yml pull --quiet
+            docker compose -f docker-compose.prod.yml pull --quiet
 
-            docker-compose -f docker-compose.prod.yml up -d 
+            docker compose -f docker-compose.prod.yml up -d 
 
             echo "Waiting for services to start (initial wait 60 seconds)..."
             sleep 60
