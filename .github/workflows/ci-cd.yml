@@ -116,6 +116,12 @@ jobs:
             echo "Waiting for services to start (initial wait 60 seconds)..."
             sleep 60
 
+            docker ps | grep nginx || {
+              echo "✗ Nginx container is not running"
+              docker compose -f docker-compose.prod.yml ps
+              exit 1
+            }
+            
             wait_for_service() {
               local service_name=$1
               local url=$2
@@ -137,9 +143,9 @@ jobs:
               return 1
             }
 
-            wait_for_service "auth-service" "http://localhost:8081/actuator/health" || exit 1
-            wait_for_service "order-service" "http://localhost:8082/actuator/health" || exit 1
-            wait_for_service "inventory-service" "http://localhost:8083/actuator/health" || exit 1
+            wait_for_service "auth-service" "http://localhost/auth/actuator/health" || exit 1
+            wait_for_service "order-service" "http://localhost/order/actuator/health" || exit 1
+            wait_for_service "inventory-service" "http://localhost/inventory/actuator/health" || exit 1
 
             docker image prune -af
 
