@@ -1,5 +1,5 @@
 # Backend Microservices Platform
-<img width="1254" height="1254" alt="e2085820-c359-4c1a-bebf-c79e8e8753bd" src="https://github.com/user-attachments/assets/539d5024-287b-4764-afc3-a988aeba29ae" />
+<img width="1244" height="1134" alt="image" src="https://github.com/user-attachments/assets/d595dec5-de3a-4fab-ae69-709a5b53c0fd" />
 
 ## Overview
 
