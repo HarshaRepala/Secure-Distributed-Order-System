@@ -185,20 +185,6 @@ docker compose up --build
 docker compose down
 ```
 
----
-
-## Service Ports
-
-| Service           | External Port | Internal Port |
-| ----------------- | ------------: | ------------: |
-| auth-service      |          8081 |          8080 |
-| order-service     |          8082 |          8080 |
-| inventory-service |          8083 |          8080 |
-| PostgreSQL        |          5432 |          5432 |
-| Redis             |          6379 |          6379 |
-
----
-
 ## API Documentation
 
 Swagger UI endpoints:
@@ -206,19 +192,19 @@ Swagger UI endpoints:
 ### Auth Service
 
 ```text
-http://localhost:8081/swagger-ui/index.html
+http://<xx.xx.xx.xx>/auth/swagger-ui/index.html
 ```
 
 ### Order Service
 
 ```text
-http://localhost:8082/swagger-ui/index.html
+http://<xx.xx.xx.xx>/order/swagger-ui/index.html
 ```
 
 ### Inventory Service
 
 ```text
-http://localhost:8083/swagger-ui/index.html
+http://<xx.xx.xx.xx>/inventory/swagger-ui/index.html
 ```
 
 ---

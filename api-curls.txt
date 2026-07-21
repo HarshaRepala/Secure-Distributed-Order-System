@@ -1,131 +1,114 @@
-# Backend Microservices Platform - Refactored cURL API Examples
-#
-# This file documents all currently exposed API endpoints in:
-# - auth-service
-# - order-service
-# - inventory-service
-#
-# Service ports (docker compose):
-# auth-service=8081, order-service=8082, inventory-service=8083
-
 ############################
-# 0) Setup variables
+# AUTH SERVICE
 ############################
 
-BASE_AUTH_URL="http://localhost:8081"
-BASE_ORDER_URL="http://localhost:8082"
-BASE_INVENTORY_URL="http://localhost:8083"
+# Register USER
+curl -X POST "http://<xx.xx.xx.xx>/auth/api/v1/auth/register" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email":"user@example.com",
+    "password":"Password@123",
+    "role":"USER"
+  }'
 
-USER_EMAIL="user@example.com"
-USER_PASSWORD="Password@123"
+# Register ADMIN
+curl -X POST "http://<xx.xx.xx.xx>/auth/api/v1/auth/register" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email":"admin@example.com",
+    "password":"Admin@123",
+    "role":"ADMIN"
+  }'
 
-ADMIN_EMAIL="admin@example.com"
-ADMIN_PASSWORD="Admin@123"
+# Login USER
+curl -X POST "http://<xx.xx.xx.xx>/auth/api/v1/auth/login" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email":"user@example.com",
+    "password":"Password@123"
+  }'
+
+# Refresh Token
+curl -X POST "http://<xx.xx.xx.xx>/auth/api/v1/auth/refresh" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "refreshToken":"<REFRESH_TOKEN>"
+  }'
+
+# Logout
+curl -X POST "http://<xx.xx.xx.xx>/auth/api/v1/auth/logout" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "refreshToken":"<REFRESH_TOKEN>"
+  }'
+
+# Health Check
+curl "http://<xx.xx.xx.xx>/auth/actuator/health"
+
+# Info
+curl "http://<xx.xx.xx.xx>/auth/actuator/info"
 
 ############################
-# 1) AUTH SERVICE (8081)
+# ORDER SERVICE
 ############################
 
-# 1.1 Register USER
-curl -X POST "$BASE_AUTH_URL/api/v1/auth/register" \
+# Create Order
+curl -X POST "http://<xx.xx.xx.xx>/order/api/v1/orders" \
+  -H "Authorization: Bearer <ACCESS_TOKEN>" \
   -H "Content-Type: application/json" \
-  -d "{\"email\":\"$USER_EMAIL\",\"password\":\"$USER_PASSWORD\",\"role\":\"USER\"}"
+  -d '{
+    "productId":1,
+    "quantity":2
+  }'
 
-# 1.2 Register ADMIN
-curl -X POST "$BASE_AUTH_URL/api/v1/auth/register" \
-  -H "Content-Type: application/json" \
-  -d "{\"email\":\"$ADMIN_EMAIL\",\"password\":\"$ADMIN_PASSWORD\",\"role\":\"ADMIN\"}"
+# Get Orders
+curl -X GET "http://<xx.xx.xx.xx>/order/api/v1/orders" \
+  -H "Authorization: Bearer <ACCESS_TOKEN>"
 
-# 1.3 Login USER
-USER_LOGIN_RESPONSE=$(curl -s -X POST "$BASE_AUTH_URL/api/v1/auth/login" \
-  -H "Content-Type: application/json" \
-  -d "{\"email\":\"$USER_EMAIL\",\"password\":\"$USER_PASSWORD\"}")
+# Cancel Order
+curl -X POST "http://<xx.xx.xx.xx>/order/api/v1/orders/<ORDER_ID>/cancel" \
+  -H "Authorization: Bearer <ADMIN_ACCESS_TOKEN>"
 
-echo "$USER_LOGIN_RESPONSE"
-USER_ACCESS_TOKEN=$(echo "$USER_LOGIN_RESPONSE" | jq -r '.accessToken')
-USER_REFRESH_TOKEN=$(echo "$USER_LOGIN_RESPONSE" | jq -r '.refreshToken')
+# Health Check
+curl "http://<xx.xx.xx.xx>/order/actuator/health"
 
-# 1.4 Refresh USER access token
-curl -X POST "$BASE_AUTH_URL/api/v1/auth/refresh" \
-  -H "Content-Type: application/json" \
-  -d "{\"refreshToken\":\"$USER_REFRESH_TOKEN\"}"
-
-# 1.5 Logout USER (returns 204 No Content)
-curl -i -X POST "$BASE_AUTH_URL/api/v1/auth/logout" \
-  -H "Content-Type: application/json" \
-  -d "{\"refreshToken\":\"$USER_REFRESH_TOKEN\"}"
-
-# 1.6 Login ADMIN
-ADMIN_LOGIN_RESPONSE=$(curl -s -X POST "$BASE_AUTH_URL/api/v1/auth/login" \
-  -H "Content-Type: application/json" \
-  -d "{\"email\":\"$ADMIN_EMAIL\",\"password\":\"$ADMIN_PASSWORD\"}")
-
-echo "$ADMIN_LOGIN_RESPONSE"
-ADMIN_ACCESS_TOKEN=$(echo "$ADMIN_LOGIN_RESPONSE" | jq -r '.accessToken')
-
-# 1.7 Health check
-curl -X GET "$BASE_AUTH_URL/actuator/health"
-
-# 1.8 Info
-curl -X GET "$BASE_AUTH_URL/actuator/info"
+# Info
+curl "http://<xx.xx.xx.xx>/order/actuator/info"
 
 ############################
-# 2) ORDER SERVICE (8082)
+# INVENTORY SERVICE
 ############################
 
-# 2.1 Create order (USER or ADMIN token required)
-# Request body must match CreateOrderRequest: { productId, quantity }
-CREATE_ORDER_RESPONSE=$(curl -s -X POST "$BASE_ORDER_URL/api/v1/orders" \
-  -H "Authorization: Bearer $USER_ACCESS_TOKEN" \
+# Reserve Stock
+curl -X POST "http://<xx.xx.xx.xx>/inventory/api/v1/inventory/reserve" \
+  -H "Authorization: Bearer <ACCESS_TOKEN>" \
   -H "Content-Type: application/json" \
-  -d '{"productId":1,"quantity":2}')
+  -d '{
+    "productId":1,
+    "quantity":2
+  }'
 
-echo "$CREATE_ORDER_RESPONSE"
-# OrderResponse: { id, userId, productId, quantity, status, createdAt }
-ORDER_ID=$(echo "$CREATE_ORDER_RESPONSE" | jq -r '.id')
-
-# 2.2 Get orders (USER or ADMIN token required)
-curl -X GET "$BASE_ORDER_URL/api/v1/orders" \
-  -H "Authorization: Bearer $USER_ACCESS_TOKEN"
-
-# 2.3 Cancel order (ADMIN token required)
-curl -X POST "$BASE_ORDER_URL/api/v1/orders/$ORDER_ID/cancel" \
-  -H "Authorization: Bearer $ADMIN_ACCESS_TOKEN"
-
-# 2.4 Health check
-curl -X GET "$BASE_ORDER_URL/actuator/health"
-
-# 2.5 Info
-curl -X GET "$BASE_ORDER_URL/actuator/info"
-
-############################
-# 3) INVENTORY SERVICE (8083)
-############################
-
-# NOTE: All inventory endpoints require authentication.
-# Reserve/release require any authenticated user; update requires ADMIN.
-
-# 3.1 Reserve stock (authenticated token required)
-curl -X POST "$BASE_INVENTORY_URL/api/v1/inventory/reserve" \
-  -H "Authorization: Bearer $USER_ACCESS_TOKEN" \
+# Release Stock
+curl -X POST "http://<xx.xx.xx.xx>/inventory/api/v1/inventory/release" \
+  -H "Authorization: Bearer <ACCESS_TOKEN>" \
   -H "Content-Type: application/json" \
-  -d '{"productId":1,"quantity":2}'
+  -d '{
+    "productId":1,
+    "quantity":1
+  }'
 
-# 3.2 Release stock (authenticated token required)
-curl -X POST "$BASE_INVENTORY_URL/api/v1/inventory/release" \
-  -H "Authorization: Bearer $USER_ACCESS_TOKEN" \
+# Update Stock
+curl -X POST "http://<xx.xx.xx.xx>/inventory/api/v1/inventory/update" \
+  -H "Authorization: Bearer <ADMIN_ACCESS_TOKEN>" \
   -H "Content-Type: application/json" \
-  -d '{"productId":1,"quantity":1}'
+  -d '{
+    "productId":1,
+    "name":"Mechanical Keyboard",
+    "quantity":100
+  }'
 
-# 3.3 Update stock (ADMIN token required)
-curl -X POST "$BASE_INVENTORY_URL/api/v1/inventory/update" \
-  -H "Authorization: Bearer $ADMIN_ACCESS_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"productId":1,"name":"Mechanical Keyboard","quantity":100}'
+# Health Check
+curl "http://<xx.xx.xx.xx>/inventory/actuator/health"
 
-# 3.4 Health check
-curl -X GET "$BASE_INVENTORY_URL/actuator/health"
-
-# 3.5 Info
-curl -X GET "$BASE_INVENTORY_URL/actuator/info"
-
+# Info
+curl "http://<xx.xx.xx.xx>/inventory/actuator/info"
