@@ -1,5 +1,6 @@
 server:
   port: ${SERVER_PORT:8082}
+  forward-headers-strategy: framework
 
 spring:
   datasource:
@@ -39,7 +40,11 @@ logging:
   level:
     root: INFO
 
-
 inventory:
   service:
     url: ${INVENTORY_SERVICE_URL:http://localhost:8083}
+
+springdoc:
+  swagger-ui:
+    config-url: /order/v3/api-docs/swagger-config
+    url: /order/v3/api-docs
