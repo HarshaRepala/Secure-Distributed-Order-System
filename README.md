@@ -343,6 +343,8 @@ No manual server-side builds are required.
 │   ├── auth-service
 │   ├── inventory-service
 │   └── order-service
+├── nginx
+│   └── nginx.conf
 ├── docker-compose.yml
 ├── docker-compose.prod.yml
 ├── api-curls.txt
