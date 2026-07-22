@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "inventory-service", url = "${inventory.service.url}")
 public interface InventoryFeignClient {
 
-    @PostMapping("/api/v1/inventory/reserve")
+    @PostMapping("/v1/reserve")
     InventoryResponse reserve(@RequestBody ReserveStockRequest request);
 
-    @PostMapping("/api/v1/inventory/release")
+    @PostMapping("/v1/release")
     InventoryResponse release(@RequestBody ReleaseStockRequest request);
 }
