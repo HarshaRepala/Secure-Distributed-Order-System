@@ -3,7 +3,7 @@
 ############################
 
 # Register USER
-curl -X POST "http://<xx.xx.xx.xx>/auth/api/v1/auth/register" \
+curl -X POST "http://<xx.xx.xx.xx>/auth/v1/register" \
   -H "Content-Type: application/json" \
   -d '{
     "email":"user@example.com",
@@ -12,7 +12,7 @@ curl -X POST "http://<xx.xx.xx.xx>/auth/api/v1/auth/register" \
   }'
 
 # Register ADMIN
-curl -X POST "http://<xx.xx.xx.xx>/auth/api/v1/auth/register" \
+curl -X POST "http://<xx.xx.xx.xx>/auth/v1/register" \
   -H "Content-Type: application/json" \
   -d '{
     "email":"admin@example.com",
@@ -21,7 +21,7 @@ curl -X POST "http://<xx.xx.xx.xx>/auth/api/v1/auth/register" \
   }'
 
 # Login USER
-curl -X POST "http://<xx.xx.xx.xx>/auth/api/v1/auth/login" \
+curl -X POST "http://<xx.xx.xx.xx>/auth/v1/login" \
   -H "Content-Type: application/json" \
   -d '{
     "email":"user@example.com",
@@ -29,14 +29,14 @@ curl -X POST "http://<xx.xx.xx.xx>/auth/api/v1/auth/login" \
   }'
 
 # Refresh Token
-curl -X POST "http://<xx.xx.xx.xx>/auth/api/v1/auth/refresh" \
+curl -X POST "http://<xx.xx.xx.xx>/auth/v1/refresh" \
   -H "Content-Type: application/json" \
   -d '{
     "refreshToken":"<REFRESH_TOKEN>"
   }'
 
 # Logout
-curl -X POST "http://<xx.xx.xx.xx>/auth/api/v1/auth/logout" \
+curl -X POST "http://<xx.xx.xx.xx>/auth/v1/logout" \
   -H "Content-Type: application/json" \
   -d '{
     "refreshToken":"<REFRESH_TOKEN>"
@@ -53,7 +53,7 @@ curl "http://<xx.xx.xx.xx>/auth/actuator/info"
 ############################
 
 # Create Order
-curl -X POST "http://<xx.xx.xx.xx>/order/api/v1/orders" \
+curl -X POST "http://<xx.xx.xx.xx>/order/v1/orders" \
   -H "Authorization: Bearer <ACCESS_TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{
@@ -62,11 +62,11 @@ curl -X POST "http://<xx.xx.xx.xx>/order/api/v1/orders" \
   }'
 
 # Get Orders
-curl -X GET "http://<xx.xx.xx.xx>/order/api/v1/orders" \
+curl -X GET "http://<xx.xx.xx.xx>/order/v1/orders" \
   -H "Authorization: Bearer <ACCESS_TOKEN>"
 
 # Cancel Order
-curl -X POST "http://<xx.xx.xx.xx>/order/api/v1/orders/<ORDER_ID>/cancel" \
+curl -X POST "http://<xx.xx.xx.xx>/order/v1/orders/<ORDER_ID>/cancel" \
   -H "Authorization: Bearer <ADMIN_ACCESS_TOKEN>"
 
 # Health Check
@@ -80,7 +80,7 @@ curl "http://<xx.xx.xx.xx>/order/actuator/info"
 ############################
 
 # Reserve Stock
-curl -X POST "http://<xx.xx.xx.xx>/inventory/api/v1/inventory/reserve" \
+curl -X POST "http://<xx.xx.xx.xx>/inventory/v1/reserve" \
   -H "Authorization: Bearer <ACCESS_TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{
@@ -89,7 +89,7 @@ curl -X POST "http://<xx.xx.xx.xx>/inventory/api/v1/inventory/reserve" \
   }'
 
 # Release Stock
-curl -X POST "http://<xx.xx.xx.xx>/inventory/api/v1/inventory/release" \
+curl -X POST "http://<xx.xx.xx.xx>/inventory/v1/release" \
   -H "Authorization: Bearer <ACCESS_TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{
@@ -98,7 +98,7 @@ curl -X POST "http://<xx.xx.xx.xx>/inventory/api/v1/inventory/release" \
   }'
 
 # Update Stock
-curl -X POST "http://<xx.xx.xx.xx>/inventory/api/v1/inventory/update" \
+curl -X POST "http://<xx.xx.xx.xx>/inventory/v1/update" \
   -H "Authorization: Bearer <ADMIN_ACCESS_TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{
