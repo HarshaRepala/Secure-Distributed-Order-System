@@ -1,5 +1,6 @@
 # Backend Microservices Platform
-<img width="1244" height="1134" alt="image" src="https://github.com/user-attachments/assets/d595dec5-de3a-4fab-ae69-709a5b53c0fd" />
+<img width="1322" height="1190" alt="image" src="https://github.com/user-attachments/assets/e0f5c773-3841-4d70-9c31-78fcc1adc272" />
+
 
 ## Overview
 
@@ -191,21 +192,15 @@ Swagger UI endpoints:
 
 ### Auth Service
 
-```text
-http://<xx.xx.xx.xx>/auth/swagger-ui/index.html
-```
+http://mymicroservices.duckdns.org/auth/swagger-ui/index.html
 
 ### Order Service
 
-```text
-http://<xx.xx.xx.xx>/order/swagger-ui/index.html
-```
+http://mymicroservices.duckdns.org/order/swagger-ui/index.html
 
 ### Inventory Service
 
-```text
-http://<xx.xx.xx.xx>/inventory/swagger-ui/index.html
-```
+http://mymicroservices.duckdns.org/inventory/swagger-ui/index.html
 
 ---
 
