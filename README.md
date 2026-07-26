@@ -64,6 +64,7 @@ Responsible for:
 | Docker Compose | Multi-container orchestration     |
 | GitHub Actions | CI/CD automation                  |
 | AWS EC2        | Production hosting                |
+| Nginx          | Reverse proxy and request routing |
 
 ---
 
@@ -320,6 +321,7 @@ Containers running in production:
 * inventory-service
 * postgres
 * redis
+* nginx
 
 Deployment is fully automated through GitHub Actions.
 
