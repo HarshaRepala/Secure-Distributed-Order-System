@@ -37,7 +37,7 @@ public class AuthService {
     private final JwtProperties jwtProperties;
     private final RedisTemplate<String, String> redisTemplate;
     @Value("${app.admin-registration-secret}")
-    private final String adminRegistrationSecret;
+    private String adminRegistrationSecret;
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
@@ -55,18 +55,16 @@ public class AuthService {
     }
 
     private UserRole getRole(RegisterRequest request) {
-        UserRole role = UserRole.USER;
-        if (adminRegistrationSecret == null || adminRegistrationSecret.isBlank()) {
-            throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Admin registration is not configured");
-        } else {
-            if (request.role() == UserRole.ADMIN) {
-                if (!Objects.equals(request.adminSecret(), adminRegistrationSecret)) {
-                    throw new ApiException(HttpStatus.FORBIDDEN, "Invalid admin registration secret");
-                }
-                role = UserRole.ADMIN;
+        if (request.role() == UserRole.ADMIN) {
+            if (adminRegistrationSecret == null || adminRegistrationSecret.isBlank()) {
+                throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Admin registration is not configured");
             }
+            if (!Objects.equals(request.adminSecret(), adminRegistrationSecret)) {
+                throw new ApiException(HttpStatus.FORBIDDEN, "Invalid admin registration secret");
+            }
+            return UserRole.ADMIN;
         }
-        return role;
+        return UserRole.USER;
     }
 
     @Transactional
