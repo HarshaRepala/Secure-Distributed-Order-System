@@ -44,7 +44,7 @@ class AuthServiceTest {
         JwtProperties props = new JwtProperties();
         props.setAccessTokenMinutes(15);
         props.setRefreshTokenDays(7);
-        authService = new AuthService(userRepository, refreshTokenRepository, passwordEncoder, jwtProvider, props, redisTemplate, "admin-secret");
+        authService = new AuthService(userRepository, refreshTokenRepository, passwordEncoder, jwtProvider, props, redisTemplate);
     }
 
     @Test
