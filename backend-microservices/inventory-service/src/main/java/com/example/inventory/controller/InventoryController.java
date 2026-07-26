@@ -9,10 +9,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1")
@@ -37,6 +36,11 @@ public class InventoryController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update")
     public InventoryResponse update(@Valid @RequestBody UpdateStockRequest request) {
-        return inventoryService.update(request);
+        return inventoryService.upsert(request);
+    }
+
+    @GetMapping("/products")
+    public List<InventoryResponse> getAllProducts() {
+        return inventoryService.getAllProducts();
     }
 }

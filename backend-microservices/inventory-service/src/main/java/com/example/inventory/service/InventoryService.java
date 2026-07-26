@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class InventoryService {
@@ -35,11 +37,23 @@ public class InventoryService {
     }
 
     @Transactional
-    public InventoryResponse update(UpdateStockRequest request) {
-        Product product = productRepository.findById(request.productId()).orElse(new Product());
-        product.setName(request.name());
+    public InventoryResponse upsert(UpdateStockRequest request) {
+        Product product;
+        if (request.productId() == null) {
+            product = new Product();
+        } else {
+            product = productRepository.findById(request.productId()).orElseThrow(() -> new ApiException("Product not found"));
+        }
         product.setAvailableQuantity(request.quantity());
         return map(productRepository.save(product));
+    }
+
+    @Transactional
+    public List<InventoryResponse> getAllProducts() {
+        return productRepository.findAll()
+                .stream()
+                .map(this::map)
+                .toList();
     }
 
     private Product findProduct(Long id) {
