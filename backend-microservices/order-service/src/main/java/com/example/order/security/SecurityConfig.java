@@ -37,7 +37,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(
-                "http://localhost:3000",
+                "http://localhost:5157",
                 "https://harsharepala.github.io"
         ));
         config.setAllowedMethods(List.of("*"));
