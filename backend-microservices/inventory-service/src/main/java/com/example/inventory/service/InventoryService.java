@@ -44,6 +44,7 @@ public class InventoryService {
         } else {
             product = productRepository.findById(request.productId()).orElseThrow(() -> new ApiException("Product not found"));
         }
+        product.setName(request.name());
         product.setAvailableQuantity(request.quantity());
         return map(productRepository.save(product));
     }
