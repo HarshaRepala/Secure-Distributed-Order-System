@@ -107,6 +107,10 @@ curl -X POST "http://mymicroservices.duckdns.org/inventory/v1/update" \
     "quantity":100
   }'
 
+# Get All Products
+curl -X GET "http://mymicroservices.duckdns.org/inventory/v1/products" \
+  -H "Authorization: Bearer <ACCESS_TOKEN>"
+
 # Health Check
 curl "http://mymicroservices.duckdns.org/inventory/actuator/health"
 
