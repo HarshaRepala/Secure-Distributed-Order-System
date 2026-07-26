@@ -43,6 +43,7 @@ logging:
     root: INFO
 
 app:
+  admin-registration-secret: ${ADMIN_REGISTRATION_SECRET}
   jwt:
     issuer: ${JWT_ISSUER:auth-service}
     access-token-minutes: ${JWT_ACCESS_TOKEN_MINUTES:15}

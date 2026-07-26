@@ -24,6 +24,7 @@ services:
       DB_PASSWORD: postgres
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      ADMIN_REGISTRATION_SECRET: ${ADMIN_REGISTRATION_SECRET}
     depends_on:
       - postgres
       - redis

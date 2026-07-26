@@ -108,6 +108,10 @@ jobs:
             cd /opt/app
 
             git pull origin main
+            
+            cat > .env <<EOF
+            ADMIN_REGISTRATION_SECRET=${{ secrets.ADMIN_REGISTRATION_SECRET }}
+            EOF
 
             docker compose -f docker-compose.prod.yml pull --quiet
 

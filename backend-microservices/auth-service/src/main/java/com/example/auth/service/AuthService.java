@@ -4,6 +4,7 @@ import com.example.auth.dto.*;
 import com.example.auth.exception.ApiException;
 import com.example.auth.model.RefreshToken;
 import com.example.auth.model.UserAccount;
+import com.example.auth.model.UserRole;
 import com.example.auth.repository.RefreshTokenRepository;
 import com.example.auth.repository.UserRepository;
 import com.example.auth.security.JwtProperties;
@@ -11,6 +12,7 @@ import com.example.auth.security.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -33,6 +36,8 @@ public class AuthService {
     private final JwtProvider jwtProvider;
     private final JwtProperties jwtProperties;
     private final RedisTemplate<String, String> redisTemplate;
+    @Value("${app.admin-registration-secret}")
+    private final String adminRegistrationSecret;
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
@@ -42,10 +47,26 @@ public class AuthService {
         UserAccount user = new UserAccount();
         user.setEmail(request.email());
         user.setPasswordHash(passwordEncoder.encode(request.password()));
-        user.setRole(request.role());
+        UserRole role = getRole(request);
+        user.setRole(role);
         UserAccount saved = userRepository.save(user);
         log.info("Registered user with id={}", saved.getId());
         return issueTokens(saved);
+    }
+
+    private UserRole getRole(RegisterRequest request) {
+        UserRole role = UserRole.USER;
+        if (adminRegistrationSecret == null || adminRegistrationSecret.isBlank()) {
+            throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Admin registration is not configured");
+        } else {
+            if (request.role() == UserRole.ADMIN) {
+                if (!Objects.equals(request.adminSecret(), adminRegistrationSecret)) {
+                    throw new ApiException(HttpStatus.FORBIDDEN, "Invalid admin registration secret");
+                }
+                role = UserRole.ADMIN;
+            }
+        }
+        return role;
     }
 
     @Transactional

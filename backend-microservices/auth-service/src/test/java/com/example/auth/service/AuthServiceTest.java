@@ -44,13 +44,13 @@ class AuthServiceTest {
         JwtProperties props = new JwtProperties();
         props.setAccessTokenMinutes(15);
         props.setRefreshTokenDays(7);
-        authService = new AuthService(userRepository, refreshTokenRepository, passwordEncoder, jwtProvider, props, redisTemplate);
+        authService = new AuthService(userRepository, refreshTokenRepository, passwordEncoder, jwtProvider, props, redisTemplate, "admin-secret");
     }
 
     @Test
     void shouldThrowWhenEmailExists() {
         when(userRepository.findByEmail("x@test.com")).thenReturn(Optional.of(new UserAccount()));
-        assertThrows(ApiException.class, () -> authService.register(new RegisterRequest("x@test.com", "secret", UserRole.USER)));
+        assertThrows(ApiException.class, () -> authService.register(new RegisterRequest("x@test.com", "secret", UserRole.USER, null)));
     }
 
     @Test

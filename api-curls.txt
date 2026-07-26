@@ -3,25 +3,25 @@
 ############################
 
 # Register USER
-curl -X POST "http://<xx.xx.xx.xx>/auth/v1/register" \
+curl -X POST "http://mymicroservices.duckdns.org/auth/v1/register" \
   -H "Content-Type: application/json" \
   -d '{
     "email":"user@example.com",
-    "password":"Password@123",
-    "role":"USER"
+    "password":"Password@123"
   }'
 
 # Register ADMIN
-curl -X POST "http://<xx.xx.xx.xx>/auth/v1/register" \
+curl -X POST "http://mymicroservices.duckdns.org/auth/v1/register" \
   -H "Content-Type: application/json" \
   -d '{
     "email":"admin@example.com",
     "password":"Admin@123",
-    "role":"ADMIN"
+    "role":"ADMIN",
+    "adminSecret":"<ADMIN_REGISTRATION_SECRET>"
   }'
 
 # Login USER
-curl -X POST "http://<xx.xx.xx.xx>/auth/v1/login" \
+curl -X POST "http://mymicroservices.duckdns.org/auth/v1/login" \
   -H "Content-Type: application/json" \
   -d '{
     "email":"user@example.com",
@@ -29,31 +29,31 @@ curl -X POST "http://<xx.xx.xx.xx>/auth/v1/login" \
   }'
 
 # Refresh Token
-curl -X POST "http://<xx.xx.xx.xx>/auth/v1/refresh" \
+curl -X POST "http://mymicroservices.duckdns.org/auth/v1/refresh" \
   -H "Content-Type: application/json" \
   -d '{
     "refreshToken":"<REFRESH_TOKEN>"
   }'
 
 # Logout
-curl -X POST "http://<xx.xx.xx.xx>/auth/v1/logout" \
+curl -X POST "http://mymicroservices.duckdns.org/auth/v1/logout" \
   -H "Content-Type: application/json" \
   -d '{
     "refreshToken":"<REFRESH_TOKEN>"
   }'
 
 # Health Check
-curl "http://<xx.xx.xx.xx>/auth/actuator/health"
+curl "http://mymicroservices.duckdns.org/auth/actuator/health"
 
 # Info
-curl "http://<xx.xx.xx.xx>/auth/actuator/info"
+curl "http://mymicroservices.duckdns.org/auth/actuator/info"
 
 ############################
 # ORDER SERVICE
 ############################
 
 # Create Order
-curl -X POST "http://<xx.xx.xx.xx>/order/v1/orders" \
+curl -X POST "http://mymicroservices.duckdns.org/order/v1/orders" \
   -H "Authorization: Bearer <ACCESS_TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{
@@ -62,25 +62,25 @@ curl -X POST "http://<xx.xx.xx.xx>/order/v1/orders" \
   }'
 
 # Get Orders
-curl -X GET "http://<xx.xx.xx.xx>/order/v1/orders" \
+curl -X GET "http://mymicroservices.duckdns.org/order/v1/orders" \
   -H "Authorization: Bearer <ACCESS_TOKEN>"
 
 # Cancel Order
-curl -X POST "http://<xx.xx.xx.xx>/order/v1/orders/<ORDER_ID>/cancel" \
+curl -X POST "http://mymicroservices.duckdns.org/order/v1/orders/<ORDER_ID>/cancel" \
   -H "Authorization: Bearer <ADMIN_ACCESS_TOKEN>"
 
 # Health Check
-curl "http://<xx.xx.xx.xx>/order/actuator/health"
+curl "http://mymicroservices.duckdns.org/order/actuator/health"
 
 # Info
-curl "http://<xx.xx.xx.xx>/order/actuator/info"
+curl "http://mymicroservices.duckdns.org/order/actuator/info"
 
 ############################
 # INVENTORY SERVICE
 ############################
 
 # Reserve Stock
-curl -X POST "http://<xx.xx.xx.xx>/inventory/v1/reserve" \
+curl -X POST "http://mymicroservices.duckdns.org/inventory/v1/reserve" \
   -H "Authorization: Bearer <ACCESS_TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{
@@ -89,7 +89,7 @@ curl -X POST "http://<xx.xx.xx.xx>/inventory/v1/reserve" \
   }'
 
 # Release Stock
-curl -X POST "http://<xx.xx.xx.xx>/inventory/v1/release" \
+curl -X POST "http://mymicroservices.duckdns.org/inventory/v1/release" \
   -H "Authorization: Bearer <ACCESS_TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{
@@ -98,7 +98,7 @@ curl -X POST "http://<xx.xx.xx.xx>/inventory/v1/release" \
   }'
 
 # Update Stock
-curl -X POST "http://<xx.xx.xx.xx>/inventory/v1/update" \
+curl -X POST "http://mymicroservices.duckdns.org/inventory/v1/update" \
   -H "Authorization: Bearer <ADMIN_ACCESS_TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{
@@ -108,7 +108,7 @@ curl -X POST "http://<xx.xx.xx.xx>/inventory/v1/update" \
   }'
 
 # Health Check
-curl "http://<xx.xx.xx.xx>/inventory/actuator/health"
+curl "http://mymicroservices.duckdns.org/inventory/actuator/health"
 
 # Info
-curl "http://<xx.xx.xx.xx>/inventory/actuator/info"
+curl "http://mymicroservices.duckdns.org/inventory/actuator/info"
