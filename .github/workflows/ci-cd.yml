@@ -154,5 +154,4 @@ jobs:
             wait_for_service "inventory-service" "http://localhost/inventory/actuator/health" || exit 1
 
             docker image prune -af
-
             docker ps
