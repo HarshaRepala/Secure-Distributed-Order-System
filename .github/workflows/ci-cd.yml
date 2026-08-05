@@ -111,6 +111,8 @@ jobs:
             
             cat > .env <<EOF
             ADMIN_REGISTRATION_SECRET=${{ secrets.ADMIN_REGISTRATION_SECRET }}
+            JWT_PRIVATE_KEY=${{ secrets.JWT_PRIVATE_KEY }}
+            JWT_PUBLIC_KEY=${{ secrets.JWT_PUBLIC_KEY }}
             EOF
 
             docker compose -f docker-compose.prod.yml pull --quiet
