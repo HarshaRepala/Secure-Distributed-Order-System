@@ -59,6 +59,7 @@ services:
       REDIS_PORT: 6379
       ADMIN_REGISTRATION_SECRET: ${ADMIN_REGISTRATION_SECRET}
       JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY}
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY}
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health || exit 1" ]
       interval: 30s
@@ -78,6 +79,7 @@ services:
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
       INVENTORY_SERVICE_URL: http://inventory-service:8080
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY}
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health || exit 1" ]
       interval: 30s
@@ -96,6 +98,7 @@ services:
       DB_URL: jdbc:postgresql://postgres:5432/appdb
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY}
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health || exit 1" ]
       interval: 30s

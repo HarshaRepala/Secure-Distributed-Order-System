@@ -10,11 +10,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          public-key-location: ${JWT_PUBLIC_KEY_LOCATION:classpath:public.pem}
 
 management:
   endpoints:
